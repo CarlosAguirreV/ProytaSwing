@@ -1,7 +1,5 @@
 package controlador;
 
-import vista.VistaTabla;
-
 /**
  * Esta clase inicia todo.
  *

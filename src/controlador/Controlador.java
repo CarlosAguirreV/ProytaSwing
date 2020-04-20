@@ -3,19 +3,18 @@ package controlador;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import modelo.POJORegistro;
+import modelo.POJOProyecto;
 import vista.VistaEdicion;
 import vista.VistaTabla;
 
 /**
- * Esta clase controla todas las acciones de la GUI
+ * Esta clase controla todas las acciones de las vistas.
  *
  * @author Carlos Aguirre
  */
 public class Controlador {
 
     public final static int SIN_CREAR = -1;
-
     public final static int EN_PROCESO = 0;
     public final static int PAUSADOS = 1;
     public final static int TERMINADOS = 2;
@@ -26,7 +25,7 @@ public class Controlador {
 
     private ControlBD bd;
     private VistaTabla vistaTabla;
-    private ArrayList<POJORegistro> registrosLista;
+    private ArrayList<POJOProyecto> registrosLista;
 
     public Controlador() {
         // Crear elementos
@@ -41,7 +40,8 @@ public class Controlador {
         mostrarTodo();
     }
 
-    // Metodos de la gui tabla
+    // ################### METODOS DE VISTA TABLA ###################
+    // Si se cierra esta ventana se cierra todo el programa.
     private void mostrarTodo() {
         bd.getRegistros(registrosLista);
         this.vistaTabla.mostrarRegistros(registrosLista);
@@ -53,12 +53,13 @@ public class Controlador {
     }
 
     public void accionBuscar(String cadena) {
-        if (cadena != null) {
 
+        if (cadena != null) {
             String cadenaTratada = cadena.trim();
 
             if (!cadenaTratada.isEmpty()) {
 
+                // Obtener todos los registros que contengan esa cadena
                 bd.getRegistrosPorTitulo(registrosLista, cadenaTratada);
                 if (registrosLista.isEmpty()) {
                     vistaTabla.mostrarMensaje("No hay registros con ese titulo.");
@@ -67,18 +68,24 @@ public class Controlador {
                 }
 
             }
-
         }
+
     }
 
     public void accionNuevoProyecto() {
-        POJORegistro registroNuevo = new POJORegistro();
+        POJOProyecto registroNuevo = new POJOProyecto();
         registroNuevo.setFechaInicio(getFechaActual());
         new VistaEdicion(this, registroNuevo, vistaTabla, true);
     }
 
+    private String getFechaActual() {
+        Calendar calendario = Calendar.getInstance();
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-YYY");
+        return formatoFecha.format(calendario.getTime());
+    }
+
     public void accionEditar(int idProyecto) {
-        POJORegistro registroActual = bd.getRegistroPorId(idProyecto);
+        POJOProyecto registroActual = bd.getRegistroPorId(idProyecto);
         new VistaEdicion(this, registroActual, vistaTabla, false);
     }
 
@@ -102,15 +109,21 @@ public class Controlador {
         }
     }
 
-    // Metodos de la gui edicion
+    // Lo que ocurrira al cerrar la aplicacion del todo
+    public void accionCerrarAplicacion() {
+        bd.desconectar();
+    }
+
+    //################### METODOS DE VISTA EDICION ###################
     public void accionVolverCerrar() {
         accionFiltrar(vistaTabla.getFiltroSeleccionado());
     }
 
-    public void accionGuardar(POJORegistro registroActual, VistaEdicion vista) {
+    public void accionGuardar(POJOProyecto registroActual, VistaEdicion vista) {
         vista.setEnabled(false);
 
         if (registroActual.getId() == SIN_CREAR) {
+            // Si el registro aun no se ha creado (no tiene id asignado [id = -1])
             if (bd.addRegistro(registroActual)) {
                 vista.setRegistroActual(bd.getUltimoRegistroCreado());
                 vista.modoEdicion(false);
@@ -119,6 +132,7 @@ public class Controlador {
                 vista.mostrarMensaje("Fallo al guardar.\n Comprueba que ese titulo no se esté usando ya.");
             }
         } else {
+            // Si el registro ya se habia creado (ya tiene ID)
             if (bd.modifyRegistro(registroActual)) {
                 vista.setRegistroActual(bd.getRegistroPorId(registroActual.getId()));
                 vista.modoEdicion(false);
@@ -142,12 +156,6 @@ public class Controlador {
                 vista.mostrarMensaje("Fallo al eliminar.");
             }
         }
-    }
-    
-    private String getFechaActual(){
-        Calendar calendario = Calendar.getInstance();
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-YYY");
-        return formatoFecha.format(calendario.getTime());
     }
 
 }

@@ -23,16 +23,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import modelo.POJORegistro;
+import modelo.POJOProyecto;
 
 /**
- * Vista de modo edicion. Info:
- * https://examples.javacodegeeks.com/desktop-java/swing/jdialog/java-jdialog-example/
+ * Vista desde la cual se pueden ver los detalles del proyecto y ademas editar
+ * los campos. Todo ello gestionado por el controlador. Es un JDialog (ventana
+ * de dialogo), esta depende de la vista VistaTabla. Sus acciones son
+ * controladas desde el controlador.
  *
  * @author Carlos Aguirre
  */
 public class VistaEdicion extends JDialog {
 
+    // Colores de la aplicacion
     private final Color colorPanel = new Color(24, 85, 130);
     private final Color colorBoton = new Color(33, 133, 183);
     private final Color colorLetra = Color.white;
@@ -44,10 +47,17 @@ public class VistaEdicion extends JDialog {
     private final Color colorCancelar = new Color(255, 185, 185);
     private final Color colorEliminar = new Color(130, 23, 9);
     private final Font fuenteCampos = new Font("Default", 1, 15);
+
+    // Lo que se mostrara si el id es -1 o lo que es lo mismo que aun no tiene id asociado
     private final String sinId = "*";
+
+    // Margen de las lineas invisibles
     private final int margen = 10;
+
+    // Margen izquierdo de los cuadros de texto JTextField
     private final int margenTexto = 5;
 
+    // Elementos Swing a usar
     private JPanel pnlGlobal, pnlNorte, pnlCentral, pnlSur; // Paneles generales
     private JPanel pnlCentralSuperior, pnlSuperiorIzq, pnlSuperiorDcha, pnlCentralInferior; // Todo del centro
     private JButton btnEditar, btnEliminar; // Arriba
@@ -55,22 +65,23 @@ public class VistaEdicion extends JDialog {
     private JTextField txtId, txtTitulo, txtFechaInicio, txtFechaFin, txtDescripcion, txtRequisitos, txtDestino, txtProblemas, txtMejoras;
     private JComboBox cmbEstado, cmbPrioridad;
 
+    // Elementos mostrados en los combo box
     private String[] estado = {"En proceso", "Pausado", "Terminado"};
     private String[] prioridad = {"Baja", "Media", "Alta"};
 
+    // Elementos de control
     private Controlador controlador;
-    private POJORegistro registroActual;
+    private POJOProyecto registroActual;
     private VistaTabla vistaPadre;
 
-    public VistaEdicion(Controlador controlador, POJORegistro registro, VistaTabla vistaPadre, boolean modoEdicion) {
+    public VistaEdicion(Controlador controlador, POJOProyecto registro, VistaTabla vistaPadre, boolean modoEdicion) {
         super(vistaPadre, "Edición");
-
-        // Definir que es una aplicacion modal
-        setModalityType(ModalityType.APPLICATION_MODAL);
-
         this.controlador = controlador;
         this.registroActual = registro;
         this.vistaPadre = vistaPadre;
+
+        // Definir que es una aplicacion modal
+        setModalityType(ModalityType.APPLICATION_MODAL);
 
         // Metodos principales
         this.crearElementos();
@@ -87,30 +98,30 @@ public class VistaEdicion extends JDialog {
 
         // Metodos de la ventana
         this.definirTamanioVentana(400, 500);
-//        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
-
     }
 
     private void crearElementos() {
+        // Paneles
         pnlGlobal = new JPanel();
         pnlNorte = new JPanel();
         pnlCentral = new JPanel();
         pnlSur = new JPanel();
-
         pnlCentralSuperior = new JPanel();
         pnlSuperiorIzq = new JPanel();
         pnlSuperiorDcha = new JPanel();
         pnlCentralInferior = new JPanel();
 
+        // Botones
         btnEditar = new JButton("Editar");
         btnEliminar = new JButton("Eliminar");
         btnVolver = new JButton("Volver");
         btnGuardar = new JButton("Guardar");
         btnCancelar = new JButton("Cancelar");
 
+        // Campos de texto
         txtId = new JTextField();
         txtId.setEnabled(false);
         txtTitulo = new JTextField();
@@ -122,20 +133,26 @@ public class VistaEdicion extends JDialog {
         txtProblemas = new JTextField();
         txtMejoras = new JTextField();
 
+        // Combo box
         cmbEstado = new JComboBox(estado);
         cmbPrioridad = new JComboBox(prioridad);
     }
 
     private void definirEstilos() {
+        // Icono de la aplicacion
         setIconImage(Toolkit.getDefaultToolkit().getImage(VistaEdicion.class.getResource("/recursos/modificar2.png")));
+
+        // Iconos de los botones
         btnEditar.setIcon(new ImageIcon(getClass().getResource("/recursos/modificar.png")));
         btnEliminar.setIcon(new ImageIcon(getClass().getResource("/recursos/eliminar.png")));
         btnVolver.setIcon(new ImageIcon(getClass().getResource("/recursos/volver.png")));
         btnGuardar.setIcon(new ImageIcon(getClass().getResource("/recursos/guardar.png")));
         btnCancelar.setIcon(new ImageIcon(getClass().getResource("/recursos/cancelar.png")));
 
+        // Color del campo ID
         txtId.setBackground(colorAzulId);
 
+        // Definir fuente de todos los campos y combo box
         txtId.setFont(fuenteCampos);
         txtTitulo.setFont(fuenteCampos);
         cmbEstado.setFont(fuenteCampos);
@@ -148,6 +165,7 @@ public class VistaEdicion extends JDialog {
         txtProblemas.setFont(fuenteCampos);
         txtMejoras.setFont(fuenteCampos);
 
+        // Aniadir margen izquierdo a los campos de texto
         txtId.setMargin(new Insets(0, margenTexto, 0, 0));
         txtTitulo.setMargin(new Insets(0, margenTexto, 0, 0));
         txtFechaInicio.setMargin(new Insets(0, margenTexto, 0, 0));
@@ -158,6 +176,7 @@ public class VistaEdicion extends JDialog {
         txtProblemas.setMargin(new Insets(0, margenTexto, 0, 0));
         txtMejoras.setMargin(new Insets(0, margenTexto, 0, 0));
 
+        // Definir el color de los campos deshabilitados, para verlo mejor
         txtId.setDisabledTextColor(colorNegro);
         txtTitulo.setDisabledTextColor(colorNegro);
         cmbEstado.setForeground(colorNegro);
@@ -170,13 +189,22 @@ public class VistaEdicion extends JDialog {
         txtProblemas.setDisabledTextColor(colorNegro);
         txtMejoras.setDisabledTextColor(colorNegro);
 
+        // Definir el color de fondo y de texto de los botones
         auxColorBotones(colorBoton, colorLetra, btnEditar, btnVolver);
         auxColorBotones(colorEliminar, colorLetra, btnEliminar);
         auxColorBotones(colorGuardar, Color.BLACK, btnGuardar);
         auxColorBotones(colorCancelar, Color.BLACK, btnCancelar);
 
+        // Definir el color de fondo del los paneles
         pnlNorte.setBackground(colorPanel);
         pnlSur.setBackground(colorPanel);
+    }
+
+    private void auxColorBotones(Color ColorFondo, Color colorLetra, JButton... botones) {
+        for (JButton boton : botones) {
+            boton.setBackground(ColorFondo);
+            boton.setForeground(colorLetra);
+        }
     }
 
     private void crearDistribuciones() {
@@ -204,7 +232,7 @@ public class VistaEdicion extends JDialog {
         pnlNorte.add(btnEditar);
         pnlNorte.add(btnCancelar);
 
-        // Panel Central
+        // Panel Central (tiene 2 paneles: Superior [tiene otros 2] e Inferior)
         pnlCentral.add(pnlCentralSuperior);
         pnlCentral.add(pnlCentralInferior);
 
@@ -221,9 +249,36 @@ public class VistaEdicion extends JDialog {
         pnlCentralInferior.add(generarPanelCampos(txtRequisitos, txtDestino, txtProblemas, txtMejoras, txtDescripcion), BorderLayout.CENTER);
 
         // Panel Sur
-//        pnlSur.add(btnVolver);
         pnlSur.add(btnGuardar);
         pnlSur.add(btnEliminar);
+    }
+
+    // Metodo auxiliar que genera un panel con etiquetas mediante los nombres pasados por parametro
+    private JPanel generarPanelEtiquetas(String... nombreEtiquetas) {
+        JPanel panelEtiquetas = new JPanel();
+        panelEtiquetas.setLayout(new GridLayout(nombreEtiquetas.length, 1, 0, 15));
+        panelEtiquetas.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, 0));
+
+        JLabel lblTemporal;
+        for (String cadena : nombreEtiquetas) {
+            lblTemporal = new JLabel(cadena);
+            panelEtiquetas.add(lblTemporal);
+        }
+
+        return panelEtiquetas;
+    }
+
+    // Metodo auxiliar que genera un panel con los campos y/o combo box pasados por parametro
+    private JPanel generarPanelCampos(JComponent... elementos) {
+        JPanel panelCampos = new JPanel();
+        panelCampos.setLayout(new GridLayout(elementos.length, 1, 0, 15));
+        panelCampos.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
+
+        for (JComponent com : elementos) {
+            panelCampos.add(com);
+        }
+
+        return panelCampos;
     }
 
     public void modoEdicion(boolean modoEdicion) {
@@ -284,13 +339,6 @@ public class VistaEdicion extends JDialog {
         setSize(new Dimension((int) anchoFinal, (int) altoFinal));
     }
 
-    private void auxColorBotones(Color ColorFondo, Color colorLetra, JButton... botones) {
-        for (JButton boton : botones) {
-            boton.setBackground(ColorFondo);
-            boton.setForeground(colorLetra);
-        }
-    }
-
     private void eventos() {
         btnEditar.addActionListener(new ActionListener() {
             @Override
@@ -315,13 +363,8 @@ public class VistaEdicion extends JDialog {
         btnVolver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (controlador == null) {
-                    System.out.println("ES NULL");
-                } else {
-                    controlador.accionVolverCerrar();
-                    VistaEdicion.this.dispose();
-                }
-
+                controlador.accionVolverCerrar();
+                VistaEdicion.this.dispose();
             }
         });
 
@@ -330,12 +373,14 @@ public class VistaEdicion extends JDialog {
             public void actionPerformed(ActionEvent ae) {
 
                 refrescarRegistroActual();
+
                 if (isTituloVacio()) {
                     txtTitulo.setBackground(colorCancelar);
                     mostrarMensaje("Pon un titulo al proyecto");
                 } else {
                     controlador.accionGuardar(registroActual, VistaEdicion.this);
                 }
+
             }
         });
 
@@ -346,19 +391,28 @@ public class VistaEdicion extends JDialog {
                 refrescarCampos();
             }
         });
-        
+
+        // Al cerrar esta ventana (JDialog)
         this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e){
+            public void windowClosing(WindowEvent e) {
                 controlador.accionVolverCerrar();
             }
         });
 
     }
 
+    // Comprueba si el campo de texto titulo esta vacio
     private boolean isTituloVacio() {
         return txtTitulo.getText().trim().isEmpty();
     }
 
+    // Pide confirmacion y devuelve el resultado
+    public boolean pedirConfirmacion(String mensaje) {
+        int respuesta = JOptionPane.showConfirmDialog(this, mensaje, "Confirmar", JOptionPane.INFORMATION_MESSAGE);
+        return respuesta == JOptionPane.YES_OPTION;
+    }
+
+    // Refresca todos los campos de texto incluyendo los combo box
     public void refrescarCampos() {
         txtId.setText(registroActual.getId() == -1 ? sinId : Integer.toString(registroActual.getId()));
         txtTitulo.setText(registroActual.getTitulo());
@@ -373,6 +427,7 @@ public class VistaEdicion extends JDialog {
         txtMejoras.setText(registroActual.getMejoras());
     }
 
+    // Obtiene todos los valores de los campos de texto y los combo box y actualiza el POJOProyecto actual
     private void refrescarRegistroActual() {
         registroActual.setTitulo(txtTitulo.getText());
         registroActual.setEstado(cmbEstado.getSelectedIndex());
@@ -386,48 +441,19 @@ public class VistaEdicion extends JDialog {
         registroActual.setDescripcion(txtDescripcion.getText());
     }
 
-    private JPanel generarPanelEtiquetas(String... nombreEtiquetas) {
-        JPanel panelEtiquetas = new JPanel();
-        panelEtiquetas.setLayout(new GridLayout(nombreEtiquetas.length, 1, 0, 15));
-        panelEtiquetas.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, 0));
-
-        JLabel lblTemporal;
-        for (String cadena : nombreEtiquetas) {
-            lblTemporal = new JLabel(cadena);
-            panelEtiquetas.add(lblTemporal);
-        }
-
-        return panelEtiquetas;
-    }
-
-    private JPanel generarPanelCampos(JComponent... elementos) {
-        JPanel panelCampos = new JPanel();
-        panelCampos.setLayout(new GridLayout(elementos.length, 1, 0, 15));
-        panelCampos.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
-
-        for (JComponent com : elementos) {
-            panelCampos.add(com);
-        }
-
-        return panelCampos;
-    }
-
-    public void setRegistroActual(POJORegistro registroActual) {
+    // Define el registro con el que se esta trabajando
+    public void setRegistroActual(POJOProyecto registroActual) {
         this.registroActual = registroActual;
     }
 
+    // Muestra una ventana con un mensaje
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public boolean pedirConfirmacion(String mensaje) {
-        int respuesta = JOptionPane.showConfirmDialog(this, mensaje, "Confirmar", JOptionPane.INFORMATION_MESSAGE);
-        return respuesta == JOptionPane.YES_OPTION;
-    }
-
+    // Cierra esta ventana
     public void cerrarVentana() {
         this.dispose();
     }
-    
-    
+
 }

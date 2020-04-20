@@ -1,12 +1,12 @@
 package modelo;
 
-public class POJORegistro {
+public class POJOProyecto {
 
     // Para los valores de estado y prioridad
     private static final int VALOR_MAX = 2;
     private static final int VALOR_MIN = 0;
 
-    // Para los valores String ya que SQLite no lo pone
+    // Para poner limites a las cadenas String, ya que SQLite no las pone
     private static final int LIMITE_TITULO = 20;
     private static final int LIMITE_FECHA = 15;
     private static final int LIMITE_DESCRIPCION = 300;
@@ -15,9 +15,8 @@ public class POJORegistro {
     private static final int LIMITE_PROBLEMAS = 200;
     private static final int LIMITE_MEJORAS = 200;
 
-    // Por si no hay titulo el valor por defecto
-    private static final String TITULO_DEFECTO = "";
-    private static final String CADENA_NULL = "";
+    // Texto por defecto en caso de no haber nada, en sustitucion de null
+    private static final String CADENA_VACIA = "";
 
     private int id;
     private String titulo;
@@ -31,14 +30,14 @@ public class POJORegistro {
     private String problemas;
     private String mejoras;
 
-    public POJORegistro() {
+    public POJOProyecto() {
         this.id = -1;
-        this.titulo = TITULO_DEFECTO;
+        this.titulo = CADENA_VACIA;
         this.estado = 0;
         this.prioridad = 0;
     }
 
-    public POJORegistro(int id, String titulo, int estado, int prioridad, String fechaInicio, String fechaFin, String descripcion, String requisitos, String destino, String problemas, String mejoras) {
+    public POJOProyecto(int id, String titulo, int estado, int prioridad, String fechaInicio, String fechaFin, String descripcion, String requisitos, String destino, String problemas, String mejoras) {
         setId(id);
         setTitulo(titulo);
         setEstado(estado);
@@ -68,7 +67,7 @@ public class POJORegistro {
         String tituloTratado = limitarCadenas(titulo, LIMITE_TITULO);
 
         if (tituloTratado.isEmpty()) {
-            tituloTratado = TITULO_DEFECTO;
+            tituloTratado = CADENA_VACIA;
         }
 
         this.titulo = tituloTratado;
@@ -154,7 +153,7 @@ public class POJORegistro {
         String cadenaActual = cadena;
 
         if (cadena == null) {
-            cadenaActual = CADENA_NULL;
+            cadenaActual = CADENA_VACIA;
         } else {
             cadenaActual = cadena.trim();
 

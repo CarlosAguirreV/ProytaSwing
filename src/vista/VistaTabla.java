@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.BorderFactory;
@@ -28,7 +30,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import modelo.POJORegistro;
+import modelo.POJOProyecto;
 
 /**
  * Vista que muestra la tabla con todos los proyectos.
@@ -37,24 +39,31 @@ import modelo.POJORegistro;
  */
 public class VistaTabla extends JFrame {
 
+    // Colores de la aplicacion
     private final Color colorPanel = new Color(24, 85, 130);
     private final Color colorPanelCentral = new Color(18, 62, 95);
     private final Color colorBoton = new Color(33, 133, 183);
     private final Color colorLetra = Color.white;
 
+    // Fuente de la aplicacion
     private final Font fuenteTabla = new Font("Default", 1, 15);
 
+    // Elementos Swing
     private JPanel pnlGlobal, pnlNorte, pnlSur;
     private JScrollPane pnlCentralScroll;
     private JButton btnBuscar, btnNuevoProyecto, btnEditar; // Arriba
     private JComboBox cmbFiltro; // Abajo
 
+    // Margen de los paneles
     private final int margen = 10;
 
-    private ArrayList<POJORegistro> registros;
-
+    // Valores del combo box
     private String[] prioridad = {"En proceso", "Pausados", "Terminados", "Todo"};
+
+    // La tabla
     private JTable tabla;
+
+    // Elemento de control
     private Controlador controlador;
 
     public VistaTabla(Controlador controlador) {
@@ -77,9 +86,8 @@ public class VistaTabla extends JFrame {
 
     private void crearElementos() {
         pnlGlobal = new JPanel();
-
         pnlNorte = new JPanel();
-        crearTabla();
+        this.tabla = new JTable();
         pnlCentralScroll = new JScrollPane(tabla);
         pnlSur = new JPanel();
 
@@ -90,29 +98,40 @@ public class VistaTabla extends JFrame {
         cmbFiltro.setSelectedIndex(3);
     }
 
-    private void crearTabla() {
-        this.tabla = new JTable();
+    private void definirEstilos() {
+        // Poner un icono a la aplicacion
+        setIconImage(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/bd.png")));
+
+        // Poner iconos a los botones
+        btnBuscar.setIcon(new ImageIcon(getClass().getResource("/recursos/consultar.png")));
+        btnNuevoProyecto.setIcon(new ImageIcon(getClass().getResource("/recursos/alta.png")));
+        btnEditar.setIcon(new ImageIcon(getClass().getResource("/recursos/modificar.png")));
+
+        // Poner color al fondo y al texto de los botones y combo box
+        auxColor(colorBoton, colorLetra, btnBuscar, btnNuevoProyecto, btnEditar, cmbFiltro);
+
+        // Poner color de fondo a los paneles
+        pnlNorte.setBackground(colorPanel);
+        pnlCentralScroll.setBackground(colorPanelCentral);
+        pnlSur.setBackground(colorPanel);
+
+        // Definir los margenes de los paneles
+        pnlNorte.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
+        pnlSur.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
+
+        // Definir una fuente para la tabla
+        tabla.setFont(fuenteTabla);
 
         // Para que solo se pueda seleccionar una fila a la vez
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
-    private void definirEstilos() {
-        setIconImage(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/bd.png")));
-        btnBuscar.setIcon(new ImageIcon(getClass().getResource("/recursos/consultar.png")));
-        btnNuevoProyecto.setIcon(new ImageIcon(getClass().getResource("/recursos/alta.png")));
-        btnEditar.setIcon(new ImageIcon(getClass().getResource("/recursos/modificar.png")));
-
-        auxColor(colorBoton, colorLetra, btnBuscar, btnNuevoProyecto, btnEditar, cmbFiltro);
-
-        pnlNorte.setBackground(colorPanel);
-        pnlCentralScroll.setBackground(colorPanelCentral);
-        pnlSur.setBackground(colorPanel);
-
-        pnlNorte.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
-        pnlSur.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
-
-        tabla.setFont(fuenteTabla);
+    // Metodo auxiliar que pone color de fondo y de texto a los elementos Swing pasados por parametro
+    private void auxColor(Color ColorFondo, Color colorLetra, JComponent... elementosSwing) {
+        for (JComponent elemento : elementosSwing) {
+            elemento.setBackground(ColorFondo);
+            elemento.setForeground(colorLetra);
+        }
     }
 
     private void crearDistribuciones() {
@@ -143,13 +162,6 @@ public class VistaTabla extends JFrame {
         setSize(new Dimension((int) anchoFinal, (int) altoFinal));
     }
 
-    private void auxColor(Color ColorFondo, Color colorLetra, JComponent... elementosSwing) {
-        for (JComponent elemento : elementosSwing) {
-            elemento.setBackground(ColorFondo);
-            elemento.setForeground(colorLetra);
-        }
-    }
-
     private void eventos() {
         btnBuscar.addActionListener(new ActionListener() {
             @Override
@@ -157,18 +169,21 @@ public class VistaTabla extends JFrame {
                 controlador.accionBuscar(mostrarBusqueda());
             }
         });
+
         btnNuevoProyecto.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 controlador.accionNuevoProyecto();
             }
         });
+
         btnEditar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
 
                 int idSeleccionado = getIdRegistroSeleccionado();
 
+                // El -1 ocurre si no hay una fila seleccionada
                 if (idSeleccionado == -1) {
                     mostrarMensaje("Selecciona una fila antes de editar.");
                 } else {
@@ -177,15 +192,18 @@ public class VistaTabla extends JFrame {
             }
         });
 
+        // Al hacer clic en la tabla
         tabla.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if(evt.getClickCount() == 2 && tabla.getSelectedRow() != -1){
+                // Esto permite detectar los dobles click
+                if (evt.getClickCount() == 2 && tabla.getSelectedRow() != -1) {
                     controlador.accionEditar(getIdRegistroSeleccionado());
                 }
             }
         });
 
+        // Al cambiar algun valor del combo box
         cmbFiltro.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -193,8 +211,16 @@ public class VistaTabla extends JFrame {
             }
         });
 
+        // Al cerrar la ventana
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                controlador.accionCerrarAplicacion();
+            }
+        });
+
     }
 
+    // Obtiene el id de proyecto de la fila seleccionada, -1 es que no hay fila seleccionada
     private int getIdRegistroSeleccionado() {
         int numFila = tabla.getSelectedRow();
         int idRegistro = 0;
@@ -208,15 +234,27 @@ public class VistaTabla extends JFrame {
         return idRegistro;
     }
 
+    // Muestra el cuadro de dialogo de buscar, retorna lo que se ha escrito, si se cierra sin mas retorna null
     private String mostrarBusqueda() {
         return JOptionPane.showInputDialog(this, "Titulo o parte del titulo", "Busqueda", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // Muestra un mensaje en esta ventana
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void rellenarTabla(ArrayList<POJORegistro> registros) {
+    // Muestra los registros sobre la tabla
+    public void mostrarRegistros(ArrayList<POJOProyecto> registros) {
+        // Rellenar la tabla para mostrar los resultados
+        rellenarTabla(registros);
+
+        // Repintar todo para refrescar, por si acaso
+        this.repaint();
+    }
+
+    // Metodo que rellena la tabla, lo que hace es cambiar el modelo
+    private void rellenarTabla(ArrayList<POJOProyecto> registros) {
         Vector columnas = new Vector();
         columnas.add("ID");
         columnas.add("Titulo");
@@ -224,7 +262,7 @@ public class VistaTabla extends JFrame {
         columnas.add("Prioridad");
 
         Vector filas = new Vector();
-        POJORegistro registroActual;
+        POJOProyecto registroActual;
         Vector registroTemporal;
         for (int i = 0; i < registros.size(); i++) {
             registroTemporal = new Vector();
@@ -267,18 +305,12 @@ public class VistaTabla extends JFrame {
         tabla.getTableHeader().setReorderingAllowed(false);
     }
 
+    // Muestra esta vista
     public void mostrarVista(boolean mostrar) {
         this.setVisible(mostrar);
     }
 
-    public void mostrarRegistros(ArrayList<POJORegistro> registros) {
-        // Rellenar la tabla para mostrar los resultados
-        rellenarTabla(registros);
-
-        // Repintar todo para refrescar, por si acaso
-        this.repaint();
-    }
-
+    // Obtiene el indice del combo box del filtro
     public int getFiltroSeleccionado() {
         return cmbFiltro.getSelectedIndex();
     }

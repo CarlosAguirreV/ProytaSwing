@@ -1,22 +1,23 @@
 package controlador;
 
 import java.util.ArrayList;
-import modelo.POJORegistro;
+import modelo.POJOProyecto;
 
 /**
  *
  * @author Carlos Aguirre
  */
 public interface ControlBDInterfaz {
-    public POJORegistro getRegistroPorId(int id);
-    public POJORegistro getUltimoRegistroCreado();
-    public void getRegistros(ArrayList<POJORegistro> registros);
-    public void getRegistrosPorTitulo(ArrayList<POJORegistro> registros, String titulo);
-    public void getRegistrosPorTituloEsp(ArrayList<POJORegistro> registros, String titulo);
-    public void getRegistrosEstado(ArrayList<POJORegistro> registros, int estado);
-    public void getRegistrosPrioridad(ArrayList<POJORegistro> registros, int prioridad);
-    public boolean addRegistro(POJORegistro registro);
+    public POJOProyecto getRegistroPorId(int id);
+    public POJOProyecto getUltimoRegistroCreado();
+    public void getRegistros(ArrayList<POJOProyecto> registros);
+    public void getRegistrosPorTitulo(ArrayList<POJOProyecto> registros, String titulo);
+    public void getRegistrosPorTituloEsp(ArrayList<POJOProyecto> registros, String titulo);
+    public void getRegistrosEstado(ArrayList<POJOProyecto> registros, int estado);
+    public void getRegistrosPrioridad(ArrayList<POJOProyecto> registros, int prioridad);
+    public boolean addRegistro(POJOProyecto registro);
     public boolean removeRegistro(int id);
-    public boolean modifyRegistro(POJORegistro registro);
+    public boolean modifyRegistro(POJOProyecto registro);
     public String getMensajeError();
+    public boolean desconectar();
 }
