@@ -18,7 +18,7 @@ public class POJOProyecto {
     private static final int LIMITE_FECHA = 15;
     private static final int LIMITE_DESCRIPCION = 300;
     private static final int LIMITE_REQUISITOS = 150;
-    private static final int LIMITE_DESTINO = 20;
+    private static final int LIMITE_DESTINO = 150;
     private static final int LIMITE_PROBLEMAS = 200;
     private static final int LIMITE_MEJORAS = 200;
 
