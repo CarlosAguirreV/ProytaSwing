@@ -14,8 +14,8 @@ public class POJOProyecto {
     private static final int VALOR_MIN = 0;
 
     // Para poner limites a las cadenas String, ya que SQLite no las pone
-    private static final int LIMITE_TITULO = 20;
-    private static final int LIMITE_FECHA = 15;
+    private static final int LIMITE_TITULO = 100;
+    private static final int LIMITE_FECHA = 50;
     private static final int LIMITE_DESCRIPCION = 300;
     private static final int LIMITE_REQUISITOS = 150;
     private static final int LIMITE_DESTINO = 150;
