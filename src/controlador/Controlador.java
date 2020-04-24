@@ -1,5 +1,6 @@
 package controlador;
 
+import modelo.ControlBD;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,14 +15,10 @@ import vista.VistaTabla;
  */
 public class Controlador {
 
-    public final static int SIN_CREAR = -1;
     public final static int EN_PROCESO = 0;
     public final static int PAUSADOS = 1;
     public final static int TERMINADOS = 2;
     public final static int TODO = 3;
-
-    public final static String[] CADENAS_ESTADO = {"En proceso", "Pausado", "Terminado"};
-    public final static String[] CADENAS_PRIORIDAD = {"Baja", "Media", "Alta"};
 
     private ControlBD bd;
     private VistaTabla vistaTabla;
@@ -75,7 +72,7 @@ public class Controlador {
     public void accionNuevoProyecto() {
         POJOProyecto registroNuevo = new POJOProyecto();
         registroNuevo.setFechaInicio(getFechaActual());
-        new VistaEdicion(this, registroNuevo, vistaTabla, true);
+        new VistaEdicion(this, registroNuevo, vistaTabla, true, true);
     }
 
     private String getFechaActual() {
@@ -86,7 +83,7 @@ public class Controlador {
 
     public void accionEditar(int idProyecto) {
         POJOProyecto registroActual = bd.getRegistroPorId(idProyecto);
-        new VistaEdicion(this, registroActual, vistaTabla, false);
+        new VistaEdicion(this, registroActual, vistaTabla, false, false);
     }
 
     public void accionFiltrar(int accionFiltrar) {
@@ -111,7 +108,9 @@ public class Controlador {
 
     // Lo que ocurrira al cerrar la aplicacion del todo
     public void accionCerrarAplicacion() {
-        bd.desconectar();
+        if (!bd.desconectar()) {
+            vistaTabla.mostrarMensaje("La BD no se ha cerrado.");
+        }
     }
 
     //################### METODOS DE VISTA EDICION ###################
@@ -122,31 +121,57 @@ public class Controlador {
     public void accionGuardar(POJOProyecto registroActual, VistaEdicion vista) {
         vista.setEnabled(false);
 
-        if (registroActual.getId() == SIN_CREAR) {
-            // Si el registro aun no se ha creado (no tiene id asignado [id = -1])
+        if (registroActual.getId() == POJOProyecto.SIN_CREAR) {
+            // NUEVO Si el registro aun no se ha creado (no tiene id asignado [id = -1])
             if (bd.addRegistro(registroActual)) {
                 vista.setRegistroActual(bd.getUltimoRegistroCreado());
+                vista.setEsNuevo(false);
+                vista.setHayCambios(true);
                 vista.modoEdicion(false);
                 vista.refrescarCampos();
             } else {
                 vista.mostrarMensaje("Fallo al guardar.\n Comprueba que ese titulo no se esté usando ya.");
             }
         } else {
-            // Si el registro ya se habia creado (ya tiene ID)
-            if (bd.modifyRegistro(registroActual)) {
-                vista.setRegistroActual(bd.getRegistroPorId(registroActual.getId()));
-                vista.modoEdicion(false);
-                vista.refrescarCampos();
+            // MODIFICAR Si el registro ya se habia creado (ya tiene ID)
+
+            // Comprobar que si el titulo es nuevo o ya existe
+            ArrayList<POJOProyecto> listaTemporal = new ArrayList();
+            bd.getRegistrosPorTituloEsp(listaTemporal, registroActual.getTitulo());
+            POJOProyecto versionAnterior = bd.getRegistroPorId(registroActual.getId());
+
+            if (registroActual.getTitulo().equals(versionAnterior.getTitulo())) {
+                // Si es el mismo titulo
+                auxModificar(registroActual, vista);
+
+            } else if (!listaTemporal.isEmpty()) {
+                // Si es un titulo distinto pero coincide con otro
+                vista.mostrarMensaje("Ese título ya ha sido asignado a otro proyecto.");
+
             } else {
-                vista.mostrarMensaje("Fallo al modificar");
+                // Si es un titulo distinto pero no esta en la lista
+                System.out.println("");
+                auxModificar(registroActual, vista);
             }
+
         }
 
         vista.setEnabled(true);
     }
 
+    private void auxModificar(POJOProyecto registroActual, VistaEdicion vista) {
+        if (bd.modifyRegistro(registroActual)) {
+            vista.setRegistroActual(bd.getRegistroPorId(registroActual.getId()));
+            vista.setHayCambios(true);
+            vista.modoEdicion(false);
+            vista.refrescarCampos();
+        } else {
+            vista.mostrarMensaje("Fallo al modificar");
+        }
+    }
+
     public void accionEliminar(int idRegistro, VistaEdicion vista) {
-        if (idRegistro == SIN_CREAR) {
+        if (idRegistro == POJOProyecto.SIN_CREAR) {
             vista.mostrarMensaje("No se puede eliminar si no se ha creado aún.");
         } else {
             if (bd.removeRegistro(idRegistro)) {

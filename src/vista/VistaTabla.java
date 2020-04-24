@@ -1,6 +1,7 @@
 package vista;
 
 import controlador.Controlador;
+import controlador.Main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -78,7 +79,7 @@ public class VistaTabla extends JFrame {
 
         // Metodos de la ventana
         this.definirTamanioVentana(450, 600);
-        this.setTitle("Control proyectos");
+        this.setTitle("Control proyectos (v" + Main.VERSION_APLICACION + ")");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
@@ -93,14 +94,14 @@ public class VistaTabla extends JFrame {
 
         btnBuscar = new JButton("Buscar");
         btnNuevoProyecto = new JButton("Nuevo proyecto");
-        btnEditar = new JButton("Editar / Ver");
+        btnEditar = new JButton("Ver / Editar");
         cmbFiltro = new JComboBox(prioridad);
         cmbFiltro.setSelectedIndex(3);
     }
 
     private void definirEstilos() {
         // Poner un icono a la aplicacion
-        setIconImage(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/bd.png")));
+        setIconImage(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/logo.png")));
 
         // Poner iconos a los botones
         btnBuscar.setIcon(new ImageIcon(getClass().getResource("/recursos/consultar.png")));
@@ -270,8 +271,8 @@ public class VistaTabla extends JFrame {
             registroActual = registros.get(i);
             registroTemporal.add(registroActual.getId());
             registroTemporal.add(registroActual.getTitulo());
-            registroTemporal.add(Controlador.CADENAS_ESTADO[registroActual.getEstado()]);
-            registroTemporal.add(Controlador.CADENAS_PRIORIDAD[registroActual.getPrioridad()]);
+            registroTemporal.add(POJOProyecto.CADENAS_ESTADO[registroActual.getEstado()]);
+            registroTemporal.add(POJOProyecto.CADENAS_PRIORIDAD[registroActual.getPrioridad()]);
 
             filas.add(registroTemporal);
         }

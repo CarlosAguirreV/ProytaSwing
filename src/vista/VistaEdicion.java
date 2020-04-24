@@ -73,12 +73,16 @@ public class VistaEdicion extends JDialog {
     private Controlador controlador;
     private POJOProyecto registroActual;
     private VistaTabla vistaPadre;
+    private boolean nuevoProyecto;
+    private boolean hayCambios;
 
-    public VistaEdicion(Controlador controlador, POJOProyecto registro, VistaTabla vistaPadre, boolean modoEdicion) {
+    public VistaEdicion(Controlador controlador, POJOProyecto registro, VistaTabla vistaPadre, boolean modoEdicion, boolean nuevoProyecto) {
         super(vistaPadre, "Edición");
         this.controlador = controlador;
         this.registroActual = registro;
         this.vistaPadre = vistaPadre;
+        this.nuevoProyecto = nuevoProyecto;
+        this.hayCambios = false;
 
         // Definir que es una aplicacion modal
         setModalityType(ModalityType.APPLICATION_MODAL);
@@ -293,13 +297,17 @@ public class VistaEdicion extends JDialog {
         txtProblemas.setEnabled(modoEdicion);
         txtMejoras.setEnabled(modoEdicion);
 
-        if (modoEdicion) {
-            btnEditar.setVisible(false);
-            btnEliminar.setVisible(true);
-            btnVolver.setVisible(false);
-            btnGuardar.setVisible(true);
-            btnCancelar.setVisible(true);
+        btnEditar.setVisible(!modoEdicion);
+        btnVolver.setVisible(!modoEdicion);
+        btnGuardar.setVisible(modoEdicion);
+        btnCancelar.setVisible(modoEdicion);
+        if (nuevoProyecto) {
+            btnEliminar.setVisible(false);
+        } else {
+            btnEliminar.setVisible(modoEdicion);
+        }
 
+        if (modoEdicion) {
             txtTitulo.setBackground(colorAmarilloEdicion);
             cmbEstado.setBackground(colorAmarilloEdicion);
             cmbPrioridad.setBackground(colorAmarilloEdicion);
@@ -311,12 +319,6 @@ public class VistaEdicion extends JDialog {
             txtProblemas.setBackground(colorAmarilloEdicion);
             txtMejoras.setBackground(colorAmarilloEdicion);
         } else {
-            btnEditar.setVisible(true);
-            btnEliminar.setVisible(false);
-            btnVolver.setVisible(true);
-            btnGuardar.setVisible(false);
-            btnCancelar.setVisible(false);
-
             txtTitulo.setBackground(colorGrisBloqueo);
             cmbEstado.setBackground(colorGrisBloqueo);
             cmbPrioridad.setBackground(colorGrisBloqueo);
@@ -350,7 +352,7 @@ public class VistaEdicion extends JDialog {
         btnEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (registroActual.getId() == Controlador.SIN_CREAR) {
+                if (registroActual.getId() == POJOProyecto.SIN_CREAR) {
                     mostrarMensaje("No existe todavia, no se puede eliminar.");
                 } else {
                     if (pedirConfirmacion("¿Deseas eliminar este proyecto?")) {
@@ -363,8 +365,11 @@ public class VistaEdicion extends JDialog {
         btnVolver.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                controlador.accionVolverCerrar();
-                VistaEdicion.this.dispose();
+                if (!nuevoProyecto && hayCambios) {
+                    controlador.accionVolverCerrar();
+                }
+
+                cerrarVentana();
             }
         });
 
@@ -387,18 +392,32 @@ public class VistaEdicion extends JDialog {
         btnCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                modoEdicion(false);
-                refrescarCampos();
+                if (nuevoProyecto) {
+                    cerrarVentana();
+                } else {
+                    modoEdicion(false);
+                    refrescarCampos();
+                }
             }
         });
 
         // Al cerrar esta ventana (JDialog)
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                controlador.accionVolverCerrar();
+                if (!nuevoProyecto && hayCambios) {
+                    controlador.accionVolverCerrar();
+                }
             }
         });
 
+    }
+
+    public void setEsNuevo(boolean esNuevo) {
+        this.nuevoProyecto = esNuevo;
+    }
+
+    public void setHayCambios(boolean hayCambios) {
+        this.hayCambios = hayCambios;
     }
 
     // Comprueba si el campo de texto titulo esta vacio
@@ -451,7 +470,7 @@ public class VistaEdicion extends JDialog {
         JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // Cierra esta ventana
+    // Cierra esta ventana (llamado desde Controlador)
     public void cerrarVentana() {
         this.dispose();
     }

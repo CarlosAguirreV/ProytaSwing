@@ -2,6 +2,13 @@ package modelo;
 
 public class POJOProyecto {
 
+    // Lo que significa que un id tenga un -1
+    public final static int SIN_CREAR = -1;
+
+    // Los estados
+    public final static String[] CADENAS_ESTADO = {"En proceso", "Pausado", "Terminado"};
+    public final static String[] CADENAS_PRIORIDAD = {"Baja", "Media", "Alta"};
+
     // Para los valores de estado y prioridad
     private static final int VALOR_MAX = 2;
     private static final int VALOR_MIN = 0;
