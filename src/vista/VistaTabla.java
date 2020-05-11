@@ -96,15 +96,15 @@ public class VistaTabla extends JFrame {
         btnNuevoProyecto = new JButton("Nuevo proyecto");
         btnEditar = new JButton("Ver / Editar");
 
+        
         // Rellenar el array de cadenas para el filtro (combo box)
         cadenasFiltro = new String[POJOProyecto.CADENAS_ESTADO.length + 1];
         cadenasFiltro[0] = "Todo";
 
-        for (int i = 0; i < POJOProyecto.CADENAS_ESTADO.length; i++) {
-            cadenasFiltro[i + 1] = POJOProyecto.CADENAS_ESTADO[i];
-            System.out.println("" + POJOProyecto.CADENAS_ESTADO[i]);
-        }
+        // Copiar los elementos que quedan al array
+        System.arraycopy(POJOProyecto.CADENAS_ESTADO, 0, cadenasFiltro, 1, POJOProyecto.CADENAS_ESTADO.length);
 
+        
         // Asignarle esos valores al combo box
         cmbFiltro = new JComboBox(cadenasFiltro);
         cmbFiltro.setSelectedIndex(0);
