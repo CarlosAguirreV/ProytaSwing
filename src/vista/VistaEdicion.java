@@ -65,10 +65,6 @@ public class VistaEdicion extends JDialog {
     private JTextField txtId, txtTitulo, txtFechaInicio, txtFechaFin, txtDescripcion, txtRequisitos, txtDestino, txtProblemas, txtMejoras;
     private JComboBox cmbEstado, cmbPrioridad;
 
-    // Elementos mostrados en los combo box
-    private String[] estado = {"En proceso", "Pausado", "Terminado"};
-    private String[] prioridad = {"Baja", "Media", "Alta"};
-
     // Elementos de control
     private Controlador controlador;
     private POJOProyecto registroActual;
@@ -138,8 +134,8 @@ public class VistaEdicion extends JDialog {
         txtMejoras = new JTextField();
 
         // Combo box
-        cmbEstado = new JComboBox(estado);
-        cmbPrioridad = new JComboBox(prioridad);
+        cmbEstado = new JComboBox(POJOProyecto.CADENAS_ESTADO);
+        cmbPrioridad = new JComboBox(POJOProyecto.CADENAS_PRIORIDAD);
     }
 
     private void definirEstilos() {

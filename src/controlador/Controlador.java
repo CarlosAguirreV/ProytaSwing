@@ -14,12 +14,6 @@ import vista.VistaTabla;
  * @author Carlos Aguirre
  */
 public class Controlador {
-
-    public final static int EN_PROCESO = 0;
-    public final static int PAUSADOS = 1;
-    public final static int TERMINADOS = 2;
-    public final static int TODO = 3;
-
     private ControlBD bd;
     private VistaTabla vistaTabla;
     private ArrayList<POJOProyecto> registrosLista;
@@ -87,22 +81,10 @@ public class Controlador {
     }
 
     public void accionFiltrar(int accionFiltrar) {
-        switch (accionFiltrar) {
-            case TODO:
-                mostrarTodo();
-                break;
-
-            case TERMINADOS:
-                mostrarRegistroEstado(TERMINADOS);
-                break;
-
-            case EN_PROCESO:
-                mostrarRegistroEstado(EN_PROCESO);
-                break;
-
-            case PAUSADOS:
-                mostrarRegistroEstado(PAUSADOS);
-                break;
+        if(accionFiltrar == 0){
+            mostrarTodo();
+        }else{
+            mostrarRegistroEstado(accionFiltrar - 1);
         }
     }
 

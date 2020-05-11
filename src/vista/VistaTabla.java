@@ -59,7 +59,7 @@ public class VistaTabla extends JFrame {
     private final int margen = 10;
 
     // Valores del combo box
-    private String[] prioridad = {"En proceso", "Pausados", "Terminados", "Todo"};
+    private String[] cadenasFiltro; //= {"En proceso", "Pausados", "Terminados", "Todo"};
 
     // La tabla
     private JTable tabla;
@@ -95,8 +95,19 @@ public class VistaTabla extends JFrame {
         btnBuscar = new JButton("Buscar");
         btnNuevoProyecto = new JButton("Nuevo proyecto");
         btnEditar = new JButton("Ver / Editar");
-        cmbFiltro = new JComboBox(prioridad);
-        cmbFiltro.setSelectedIndex(3);
+
+        // Rellenar el array de cadenas para el filtro (combo box)
+        cadenasFiltro = new String[POJOProyecto.CADENAS_ESTADO.length + 1];
+        cadenasFiltro[0] = "Todo";
+
+        for (int i = 0; i < POJOProyecto.CADENAS_ESTADO.length; i++) {
+            cadenasFiltro[i + 1] = POJOProyecto.CADENAS_ESTADO[i];
+            System.out.println("" + POJOProyecto.CADENAS_ESTADO[i]);
+        }
+
+        // Asignarle esos valores al combo box
+        cmbFiltro = new JComboBox(cadenasFiltro);
+        cmbFiltro.setSelectedIndex(0);
     }
 
     private void definirEstilos() {
