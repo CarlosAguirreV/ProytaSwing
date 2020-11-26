@@ -1,26 +1,11 @@
 package modelo;
 
+import static modelo.Constantes.*;
+import static modelo.Diccionario.*;
+
 public class POJOProyecto {
 
-    // Lo que significa que un id tenga un -1
-    public final static int SIN_CREAR = -1;
-
-    // Los estados
-    public final static String[] CADENAS_ESTADO = {"En proceso", "Pausado", "Terminado", "Idea"};
-    public final static String[] CADENAS_PRIORIDAD = {"Baja", "Media", "Alta"};
-
-    // Para poner limites a las cadenas String, ya que SQLite no las pone
-    private static final int LIMITE_TITULO = 100;
-    private static final int LIMITE_FECHA = 50;
-    private static final int LIMITE_DESCRIPCION = 300;
-    private static final int LIMITE_REQUISITOS = 150;
-    private static final int LIMITE_DESTINO = 150;
-    private static final int LIMITE_PROBLEMAS = 200;
-    private static final int LIMITE_MEJORAS = 200;
-
-    // Texto por defecto en caso de no haber nada, en sustitucion de null
-    private static final String CADENA_VACIA = "";
-
+    // ################### CAMPOS ###################
     private int id;
     private String titulo;
     private int estado;
@@ -33,6 +18,7 @@ public class POJOProyecto {
     private String problemas;
     private String mejoras;
 
+    // ################### CONSTRUCTORES ###################
     public POJOProyecto() {
         this.id = -1;
         this.titulo = CADENA_VACIA;
@@ -54,6 +40,7 @@ public class POJOProyecto {
         setMejoras(mejoras);
     }
 
+    // ################### METODOS ###################
     public int getId() {
         return id;
     }

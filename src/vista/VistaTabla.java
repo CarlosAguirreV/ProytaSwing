@@ -1,15 +1,14 @@
 package vista;
 
 import controlador.Controlador;
-import controlador.Main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -31,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import static modelo.Diccionario.*;
 import modelo.POJOProyecto;
 
 /**
@@ -65,8 +65,23 @@ public class VistaTabla extends JFrame {
     private JTable tabla;
 
     // Elemento de control
-    private Controlador controlador;
+    private final Controlador controlador;
 
+    // Icono de la aplicacion
+    protected final ArrayList<Image> icono;
+
+    // ########################## CONSTRUCTOR PREVIO ##########################
+    {
+        icono = new ArrayList();
+        icono.add(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/icono1.png")));
+        icono.add(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/icono2.png")));
+        icono.add(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/icono3.png")));
+        icono.add(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/icono4.png")));
+        this.setIconImages(icono);
+        this.setTitle(NOMBRE_APLICACION);
+    }
+
+    // ########################## CONSTRUCTOR ##########################
     public VistaTabla(Controlador controlador) {
         this.controlador = controlador;
 
@@ -79,12 +94,12 @@ public class VistaTabla extends JFrame {
 
         // Metodos de la ventana
         this.definirTamanioVentana(450, 600);
-        this.setTitle("Control proyectos (v" + Main.VERSION_APLICACION + ")");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(true);
-        this.setLocationRelativeTo(null);
+        super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        super.setResizable(true);
+        super.setLocationRelativeTo(null);
     }
 
+    // ########################## METODOS ##########################
     private void crearElementos() {
         pnlGlobal = new JPanel();
         pnlNorte = new JPanel();
@@ -92,27 +107,23 @@ public class VistaTabla extends JFrame {
         pnlCentralScroll = new JScrollPane(tabla);
         pnlSur = new JPanel();
 
-        btnBuscar = new JButton("Buscar");
-        btnNuevoProyecto = new JButton("Nuevo proyecto");
-        btnEditar = new JButton("Ver / Editar");
+        btnBuscar = new JButton(BUSCAR);
+        btnNuevoProyecto = new JButton(NUEVO_PROYECTO);
+        btnEditar = new JButton(VER_EDITAR);
 
-        
         // Rellenar el array de cadenas para el filtro (combo box)
-        cadenasFiltro = new String[POJOProyecto.CADENAS_ESTADO.length + 1];
-        cadenasFiltro[0] = "Todo";
+        cadenasFiltro = new String[CADENAS_ESTADO.length + 1];
+        cadenasFiltro[0] = TODO;
 
         // Copiar los elementos que quedan al array
-        System.arraycopy(POJOProyecto.CADENAS_ESTADO, 0, cadenasFiltro, 1, POJOProyecto.CADENAS_ESTADO.length);
+        System.arraycopy(CADENAS_ESTADO, 0, cadenasFiltro, 1, CADENAS_ESTADO.length);
 
-        
         // Asignarle esos valores al combo box
         cmbFiltro = new JComboBox(cadenasFiltro);
         cmbFiltro.setSelectedIndex(0);
     }
 
     private void definirEstilos() {
-        // Poner un icono a la aplicacion
-        setIconImage(Toolkit.getDefaultToolkit().getImage(VistaTabla.class.getResource("/recursos/logo.png")));
 
         // Poner iconos a los botones
         btnBuscar.setIcon(new ImageIcon(getClass().getResource("/recursos/consultar.png")));
@@ -175,32 +186,22 @@ public class VistaTabla extends JFrame {
     }
 
     private void eventos() {
-        btnBuscar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                controlador.accionBuscar(mostrarBusqueda());
-            }
+        btnBuscar.addActionListener((ActionEvent ae) -> {
+            controlador.accionBuscar(mostrarBusqueda());
         });
 
-        btnNuevoProyecto.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                controlador.accionNuevoProyecto();
-            }
+        btnNuevoProyecto.addActionListener((ActionEvent ae) -> {
+            controlador.accionNuevoProyecto();
         });
 
-        btnEditar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
+        btnEditar.addActionListener((ActionEvent ae) -> {
+            int idSeleccionado = getIdRegistroSeleccionado();
 
-                int idSeleccionado = getIdRegistroSeleccionado();
-
-                // El -1 ocurre si no hay una fila seleccionada
-                if (idSeleccionado == -1) {
-                    mostrarMensaje("Selecciona una fila antes de editar.");
-                } else {
-                    controlador.accionEditar(idSeleccionado);
-                }
+            // El -1 ocurre si no hay una fila seleccionada
+            if (idSeleccionado == -1) {
+                mostrarMensaje(SEL_FILA_ANTES_EDITAR);
+            } else {
+                controlador.accionEditar(idSeleccionado);
             }
         });
 
@@ -216,15 +217,13 @@ public class VistaTabla extends JFrame {
         });
 
         // Al cambiar algun valor del combo box
-        cmbFiltro.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                controlador.accionFiltrar(getFiltroSeleccionado());
-            }
+        cmbFiltro.addActionListener((ActionEvent ae) -> {
+            controlador.accionFiltrar(getFiltroSeleccionado());
         });
 
         // Al cerrar la ventana
         this.addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 controlador.accionCerrarAplicacion();
             }
@@ -235,7 +234,7 @@ public class VistaTabla extends JFrame {
     // Obtiene el id de proyecto de la fila seleccionada, -1 es que no hay fila seleccionada
     private int getIdRegistroSeleccionado() {
         int numFila = tabla.getSelectedRow();
-        int idRegistro = 0;
+        int idRegistro;
 
         if (numFila != -1) {
             idRegistro = (Integer) tabla.getValueAt(numFila, 0);
@@ -248,12 +247,12 @@ public class VistaTabla extends JFrame {
 
     // Muestra el cuadro de dialogo de buscar, retorna lo que se ha escrito, si se cierra sin mas retorna null
     private String mostrarBusqueda() {
-        return JOptionPane.showInputDialog(this, "Titulo o parte del titulo", "Busqueda", JOptionPane.INFORMATION_MESSAGE);
+        return JOptionPane.showInputDialog(this, TITULO_PARTE, BUSQUEDA, JOptionPane.INFORMATION_MESSAGE);
     }
 
     // Muestra un mensaje en esta ventana
     public void mostrarMensaje(String mensaje) {
-        JOptionPane.showMessageDialog(this, mensaje, "Información", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, mensaje, INFORMACION, JOptionPane.INFORMATION_MESSAGE);
     }
 
     // Muestra los registros sobre la tabla
@@ -268,10 +267,10 @@ public class VistaTabla extends JFrame {
     // Metodo que rellena la tabla, lo que hace es cambiar el modelo
     private void rellenarTabla(ArrayList<POJOProyecto> registros) {
         Vector columnas = new Vector();
-        columnas.add("ID");
-        columnas.add("Titulo");
-        columnas.add("Estado");
-        columnas.add("Prioridad");
+        columnas.add(ID);
+        columnas.add(TITULO);
+        columnas.add(ESTADO);
+        columnas.add(PRIORIDAD);
 
         Vector filas = new Vector();
         POJOProyecto registroActual;
@@ -282,8 +281,8 @@ public class VistaTabla extends JFrame {
             registroActual = registros.get(i);
             registroTemporal.add(registroActual.getId());
             registroTemporal.add(registroActual.getTitulo());
-            registroTemporal.add(POJOProyecto.CADENAS_ESTADO[registroActual.getEstado()]);
-            registroTemporal.add(POJOProyecto.CADENAS_PRIORIDAD[registroActual.getPrioridad()]);
+            registroTemporal.add(CADENAS_ESTADO[registroActual.getEstado()]);
+            registroTemporal.add(CADENAS_PRIORIDAD[registroActual.getPrioridad()]);
 
             filas.add(registroTemporal);
         }

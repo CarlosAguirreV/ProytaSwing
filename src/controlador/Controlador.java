@@ -4,6 +4,8 @@ import modelo.ControlBD;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import static modelo.Constantes.*;
+import static modelo.Diccionario.*;
 import modelo.POJOProyecto;
 import vista.VistaEdicion;
 import vista.VistaTabla;
@@ -14,10 +16,13 @@ import vista.VistaTabla;
  * @author Carlos Aguirre
  */
 public class Controlador {
+
+    // ################### CAMPOS ###################
     private ControlBD bd;
     private VistaTabla vistaTabla;
     private ArrayList<POJOProyecto> registrosLista;
 
+    // ################### CONSTRUCTOR ###################
     public Controlador() {
         // Crear elementos
         this.bd = new ControlBD();
@@ -44,23 +49,20 @@ public class Controlador {
     }
 
     public void accionBuscar(String cadena) {
-
         if (cadena != null) {
             String cadenaTratada = cadena.trim();
 
             if (!cadenaTratada.isEmpty()) {
-
                 // Obtener todos los registros que contengan esa cadena
                 bd.getRegistrosPorTitulo(registrosLista, cadenaTratada);
                 if (registrosLista.isEmpty()) {
-                    vistaTabla.mostrarMensaje("No hay registros con ese titulo.");
+                    vistaTabla.mostrarMensaje(NO_REGISTROS_TITULO);
                 } else {
                     vistaTabla.mostrarRegistros(registrosLista);
                 }
-
             }
-        }
 
+        }
     }
 
     public void accionNuevoProyecto() {
@@ -69,10 +71,8 @@ public class Controlador {
         new VistaEdicion(this, registroNuevo, vistaTabla, true, true);
     }
 
-    private String getFechaActual() {
-        Calendar calendario = Calendar.getInstance();
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("dd-MM-YYY");
-        return formatoFecha.format(calendario.getTime());
+    public String getFechaActual() {
+        return new SimpleDateFormat(FORMATO_FECHA_HORA).format(Calendar.getInstance().getTime());
     }
 
     public void accionEditar(int idProyecto) {
@@ -81,9 +81,9 @@ public class Controlador {
     }
 
     public void accionFiltrar(int accionFiltrar) {
-        if(accionFiltrar == 0){
+        if (accionFiltrar == 0) {
             mostrarTodo();
-        }else{
+        } else {
             mostrarRegistroEstado(accionFiltrar - 1);
         }
     }
@@ -91,7 +91,7 @@ public class Controlador {
     // Lo que ocurrira al cerrar la aplicacion del todo
     public void accionCerrarAplicacion() {
         if (!bd.desconectar()) {
-            vistaTabla.mostrarMensaje("La BD no se ha cerrado.");
+            vistaTabla.mostrarMensaje(BD_NO_CERRADA);
         }
     }
 
@@ -103,7 +103,7 @@ public class Controlador {
     public void accionGuardar(POJOProyecto registroActual, VistaEdicion vista) {
         vista.setEnabled(false);
 
-        if (registroActual.getId() == POJOProyecto.SIN_CREAR) {
+        if (registroActual.getId() == SIN_CREAR) {
             // NUEVO Si el registro aun no se ha creado (no tiene id asignado [id = -1])
             if (bd.addRegistro(registroActual)) {
                 vista.setRegistroActual(bd.getUltimoRegistroCreado());
@@ -112,7 +112,7 @@ public class Controlador {
                 vista.modoEdicion(false);
                 vista.refrescarCampos();
             } else {
-                vista.mostrarMensaje("Fallo al guardar.\n Comprueba que ese titulo no se esté usando ya.");
+                vista.mostrarMensaje(FALLO_GUARDADO);
             }
         } else {
             // MODIFICAR Si el registro ya se habia creado (ya tiene ID)
@@ -128,11 +128,10 @@ public class Controlador {
 
             } else if (!listaTemporal.isEmpty()) {
                 // Si es un titulo distinto pero coincide con otro
-                vista.mostrarMensaje("Ese título ya ha sido asignado a otro proyecto.");
+                vista.mostrarMensaje(TITULO_YA_USADO);
 
             } else {
                 // Si es un titulo distinto pero no esta en la lista
-                System.out.println("");
                 auxModificar(registroActual, vista);
             }
 
@@ -148,19 +147,19 @@ public class Controlador {
             vista.modoEdicion(false);
             vista.refrescarCampos();
         } else {
-            vista.mostrarMensaje("Fallo al modificar");
+            vista.mostrarMensaje(FALLO_AL_MODIFICAR);
         }
     }
 
     public void accionEliminar(int idRegistro, VistaEdicion vista) {
-        if (idRegistro == POJOProyecto.SIN_CREAR) {
-            vista.mostrarMensaje("No se puede eliminar si no se ha creado aún.");
+        if (idRegistro == SIN_CREAR) {
+            vista.mostrarMensaje(NO_ELIMINA_SI_NO_CREA);
         } else {
             if (bd.removeRegistro(idRegistro)) {
                 vista.cerrarVentana();
                 accionVolverCerrar();
             } else {
-                vista.mostrarMensaje("Fallo al eliminar.");
+                vista.mostrarMensaje(FALLO_AL_ELIMINAR);
             }
         }
     }

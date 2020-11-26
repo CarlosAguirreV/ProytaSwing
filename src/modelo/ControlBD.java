@@ -8,7 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import modelo.POJOProyecto;
+import static modelo.Constantes.*;
+import static modelo.Diccionario.*;
 
 /**
  * Esta clase maneja la tabla 'proyectos' de la base de datos 'bd_proyectos' de
@@ -20,15 +21,16 @@ import modelo.POJOProyecto;
  */
 public class ControlBD implements ControlBDInterfaz {
 
-    private static final String NOMBRE_ARCHIVO = "bd_proyectos";
-    private static final String RUTA_BD = "jdbc:sqlite:" + NOMBRE_ARCHIVO;
+    // ################### CAMPOS ###################
     private String mensajeError;
     private Connection conexion;
 
+    // ################### CONTROLADOR ###################
     public ControlBD() {
         conectar();
     }
 
+    // ################### METODOS ###################
     // Intentar conectar
     private boolean conectar() {
         // Si no existe el archivo dejara una senial para crear las tablas despues
@@ -42,7 +44,7 @@ public class ControlBD implements ControlBDInterfaz {
             }
             return true;
         } catch (SQLException ex) {
-            System.out.println("ERROR - Al conectar. " + ex.getMessage());
+            System.out.println(ERROR_CONEXION + ex.getMessage());
             return false;
         }
     }
@@ -67,7 +69,7 @@ public class ControlBD implements ControlBDInterfaz {
             return true;
 
         } catch (SQLException ex) {
-            System.out.println("ERROR - Al crear la BD." + ex.getMessage());
+            System.out.println(ERROR_CREAR_BD + ex.getMessage());
             return false;
         }
     }
@@ -90,8 +92,8 @@ public class ControlBD implements ControlBDInterfaz {
             sentencia.close();
 
         } catch (Exception ex) {
-            mensajeError = "No se pudo realizar la consulta.";
-            System.out.println("ERROR - Al realizar la consulta." + ex.getMessage());
+            mensajeError = FALLO_AL_CONSULTAR;
+            System.out.println(ERROR_CONSULTA + ex.getMessage());
         }
 
         return registro;
@@ -129,8 +131,8 @@ public class ControlBD implements ControlBDInterfaz {
             sentencia.close();
 
         } catch (Exception ex) {
-            mensajeError = "No se pudo realizar la consulta.";
-            System.out.println("ERROR - Al realizar la consulta." + ex.getMessage());
+            mensajeError = FALLO_AL_CONSULTAR;
+            System.out.println(ERROR_CONSULTA + ex.getMessage());
         }
     }
 
@@ -170,8 +172,8 @@ public class ControlBD implements ControlBDInterfaz {
 
         } catch (Exception ex) {
             correcto = false;
-            mensajeError = "No se pudo realizar la operación";
-            System.out.println("ERROR - Al realizar el update." + ex.getMessage());
+            mensajeError = FALLO_OPERACION;
+            System.out.println(ERROR_UPDATE + ex.getMessage());
         }
 
         return correcto;
@@ -201,7 +203,7 @@ public class ControlBD implements ControlBDInterfaz {
             return ejecutarUpdate(sql);
 
         } else {
-            mensajeError = "Ya hay un registro con ese titulo, escribe otro.";
+            mensajeError = TITULO_YA_USADO;
             return false;
         }
     }
@@ -239,7 +241,7 @@ public class ControlBD implements ControlBDInterfaz {
             this.conexion.close();
             return true;
         } catch (SQLException ex) {
-            System.out.println("ERROR: " + ex.getMessage());
+            System.out.println(ERROR + ex.getMessage());
             return false;
         }
     }

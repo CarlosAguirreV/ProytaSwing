@@ -1,13 +1,14 @@
 package modelo;
 
 import java.util.ArrayList;
-import modelo.POJOProyecto;
 
 /**
+ * Interfaz con los metodos necesarios para manejar la BD.
  *
  * @author Carlos Aguirre
  */
 public interface ControlBDInterfaz {
+
     public POJOProyecto getRegistroPorId(int id);
     public POJOProyecto getUltimoRegistroCreado();
     public void getRegistros(ArrayList<POJOProyecto> registros);
