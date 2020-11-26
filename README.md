@@ -13,7 +13,7 @@ Desde la misma página de [SourceForge]().
 Solo hay que crear proyectos, verás como se van añadiendo a la lista.
 Luego mediante el cuadro de abajo podrás filtrarlos por ideas, en proceso, pausados y terminados. 
 También podrás hacer búsquedas por título.
-Todos los proyectos son almacenados como registros en una BD llamada "proyectos.bd".
+Todos los proyectos son almacenados como registros en una BD llamada "bd_proyectos".
 
 ## 🔩 Diferencias entre versiones.
 La versión Swing es más liviana, emplea poca memoria RAM pero es menos vistosa.
