@@ -33,8 +33,8 @@ public class Controlador {
         // Mostrar vista tabla
         this.vistaTabla.mostrarVista(true);
 
-        // Mostrar todos los registros
-        mostrarTodo();
+        // Mostrar registros "En proceso" por defecto.
+        accionFiltrar(1);
     }
 
     // ################### METODOS DE VISTA TABLA ###################
