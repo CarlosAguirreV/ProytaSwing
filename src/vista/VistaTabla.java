@@ -16,7 +16,6 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -52,14 +51,15 @@ public class VistaTabla extends JFrame {
     // Elementos Swing
     private JPanel pnlGlobal, pnlNorte, pnlSur;
     private JScrollPane pnlCentralScroll;
-    private JButton btnBuscar, btnNuevoProyecto, btnEditar; // Arriba
+    private JButton btnBuscar, btnNuevoProyecto, btnEditar, btnAcerca; // Arriba.
     private JComboBox cmbFiltro; // Abajo
+    private JLabel lblVer;
 
     // Margen de los paneles
     private final int margen = 10;
 
-    // Valores del combo box
-    private String[] cadenasFiltro; //= {"En proceso", "Pausados", "Terminados", "Todo"};
+    // Valores del combo box: "En proceso", "Pausados", "Terminados", "Todo".
+    private String[] cadenasFiltro;
 
     // La tabla
     private JTable tabla;
@@ -110,6 +110,8 @@ public class VistaTabla extends JFrame {
         btnBuscar = new JButton(BUSCAR);
         btnNuevoProyecto = new JButton(NUEVO_PROYECTO);
         btnEditar = new JButton(VER_EDITAR);
+        btnAcerca = new JButton();
+        lblVer = new JLabel(VER);
 
         // Rellenar el array de cadenas para el filtro (combo box)
         cadenasFiltro = new String[CADENAS_ESTADO.length + 1];
@@ -129,27 +131,37 @@ public class VistaTabla extends JFrame {
         btnBuscar.setIcon(new ImageIcon(getClass().getResource("/recursos/consultar.png")));
         btnNuevoProyecto.setIcon(new ImageIcon(getClass().getResource("/recursos/alta.png")));
         btnEditar.setIcon(new ImageIcon(getClass().getResource("/recursos/modificar.png")));
+        btnAcerca.setIcon(new ImageIcon(getClass().getResource("/recursos/acerca.png")));
 
-        // Poner color al fondo y al texto de los botones y combo box
-        auxColor(colorBoton, colorLetra, btnBuscar, btnNuevoProyecto, btnEditar, cmbFiltro);
+        // Quitar el recuadro de foco al boton.
+        btnBuscar.setFocusPainted(false);
+        btnNuevoProyecto.setFocusPainted(false);
+        btnEditar.setFocusPainted(false);
+        btnAcerca.setFocusPainted(false);
 
-        // Poner color de fondo a los paneles
+        // Poner color al fondo y al texto de los botones y combo box.
+        auxColor(colorBoton, colorLetra, btnBuscar, btnNuevoProyecto, btnEditar, cmbFiltro, btnAcerca);
+
+        lblVer.setForeground(colorLetra);
+
+        // Poner color de fondo a los paneles.
         pnlNorte.setBackground(colorPanel);
         pnlCentralScroll.setBackground(colorPanelCentral);
         pnlSur.setBackground(colorPanel);
 
-        // Definir los margenes de los paneles
+        // Definir los margenes de los paneles y etiquetas.
         pnlNorte.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
         pnlSur.setBorder(BorderFactory.createEmptyBorder(margen, margen, margen, margen));
+        lblVer.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, margen));
 
-        // Definir una fuente para la tabla
+        // Definir una fuente para la tabla.
         tabla.setFont(fuenteTabla);
 
-        // Para que solo se pueda seleccionar una fila a la vez
+        // Para que solo se pueda seleccionar una fila a la vez.
         tabla.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
-    // Metodo auxiliar que pone color de fondo y de texto a los elementos Swing pasados por parametro
+    // Metodo auxiliar que pone color de fondo y de texto a los elementos Swing pasados por parametro.
     private void auxColor(Color ColorFondo, Color colorLetra, JComponent... elementosSwing) {
         for (JComponent elemento : elementosSwing) {
             elemento.setBackground(ColorFondo);
@@ -160,7 +172,7 @@ public class VistaTabla extends JFrame {
     private void crearDistribuciones() {
         pnlGlobal.setLayout(new BorderLayout());
         pnlNorte.setLayout(new GridLayout(1, 3, 20, 0));
-        pnlSur.setLayout(new BoxLayout(pnlSur, BoxLayout.Y_AXIS));
+        pnlSur.setLayout(new BorderLayout());
     }
 
     private void colocarElementos() {
@@ -173,7 +185,9 @@ public class VistaTabla extends JFrame {
         pnlNorte.add(btnNuevoProyecto);
         pnlNorte.add(btnEditar);
 
-        pnlSur.add(cmbFiltro);
+        pnlSur.add(lblVer, BorderLayout.WEST);
+        pnlSur.add(cmbFiltro, BorderLayout.CENTER);
+        pnlSur.add(btnAcerca, BorderLayout.EAST);
     }
 
     private void definirTamanioVentana(double pxAlto, double pxAncho) {
@@ -197,7 +211,7 @@ public class VistaTabla extends JFrame {
         btnEditar.addActionListener((ActionEvent ae) -> {
             int idSeleccionado = getIdRegistroSeleccionado();
 
-            // El -1 ocurre si no hay una fila seleccionada
+            // El -1 ocurre si no hay una fila seleccionada.
             if (idSeleccionado == -1) {
                 mostrarMensaje(SEL_FILA_ANTES_EDITAR);
             } else {
@@ -205,23 +219,28 @@ public class VistaTabla extends JFrame {
             }
         });
 
-        // Al hacer clic en la tabla
+        // Al hacer clic en la tabla.
         tabla.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent evt) {
-                // Esto permite detectar los dobles click
+                // Esto permite detectar los dobles click.
                 if (evt.getClickCount() == 2 && tabla.getSelectedRow() != -1) {
                     controlador.accionEditar(getIdRegistroSeleccionado());
                 }
             }
         });
 
-        // Al cambiar algun valor del combo box
+        // Al cambiar algun valor del combo box.
         cmbFiltro.addActionListener((ActionEvent ae) -> {
             controlador.accionFiltrar(getFiltroSeleccionado());
         });
 
-        // Al cerrar la ventana
+        // Al pulsar en el boton acerca de.
+        btnAcerca.addActionListener((ActionEvent ae) -> {
+            controlador.accionAcercaDe();
+        });
+
+        // Al cerrar la ventana.
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

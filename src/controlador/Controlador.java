@@ -7,6 +7,7 @@ import java.util.Calendar;
 import static modelo.Constantes.*;
 import static modelo.Diccionario.*;
 import modelo.POJOProyecto;
+import vista.VistaAcerca;
 import vista.VistaEdicion;
 import vista.VistaTabla;
 
@@ -93,6 +94,10 @@ public class Controlador {
         if (!bd.desconectar()) {
             vistaTabla.mostrarMensaje(BD_NO_CERRADA);
         }
+    }
+
+    public void accionAcercaDe() {
+        new VistaAcerca(vistaTabla);
     }
 
     //################### METODOS DE VISTA EDICION ###################

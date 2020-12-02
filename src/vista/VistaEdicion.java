@@ -7,13 +7,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -75,18 +73,6 @@ public class VistaEdicion extends JDialog {
     private boolean nuevoProyecto;
     private boolean hayCambios;
 
-    protected final ArrayList<Image> icono;
-
-    // ########################## CONSTRUCTOR PREVIO ##########################
-    {
-        icono = new ArrayList();
-        icono.add(Toolkit.getDefaultToolkit().getImage(VistaEdicion.class.getResource("/recursos/icono1.png")));
-        icono.add(Toolkit.getDefaultToolkit().getImage(VistaEdicion.class.getResource("/recursos/icono2.png")));
-        icono.add(Toolkit.getDefaultToolkit().getImage(VistaEdicion.class.getResource("/recursos/icono3.png")));
-        icono.add(Toolkit.getDefaultToolkit().getImage(VistaEdicion.class.getResource("/recursos/icono4.png")));
-        this.setIconImages(icono);
-    }
-
     // ########################## CONSTRUCTOR ##########################
     public VistaEdicion(Controlador controlador, POJOProyecto registro, VistaTabla vistaPadre, boolean modoEdicion, boolean nuevoProyecto) {
         super(vistaPadre, "Edición");
@@ -96,7 +82,7 @@ public class VistaEdicion extends JDialog {
         this.hayCambios = false;
 
         // Definir que es una aplicacion modal.
-        setModalityType(ModalityType.APPLICATION_MODAL);
+        super.setModalityType(ModalityType.APPLICATION_MODAL);
 
         // Metodos principales.
         this.crearElementos();
@@ -109,7 +95,7 @@ public class VistaEdicion extends JDialog {
         this.modoEdicion(modoEdicion);
 
         // Mostrar valores recibidos.
-        refrescarCampos();
+        this.refrescarCampos();
 
         // Metodos de la ventana.
         this.definirTamanioVentana(400, 500);
@@ -155,6 +141,9 @@ public class VistaEdicion extends JDialog {
     }
 
     private void definirEstilos() {
+        // Poner un icono.
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(VistaEdicion.class.getResource("/recursos/icono4.png")));
+
         // Iconos de los botones.
         btnEditar.setIcon(new ImageIcon(getClass().getResource("/recursos/modificar.png")));
         btnEliminar.setIcon(new ImageIcon(getClass().getResource("/recursos/eliminar.png")));

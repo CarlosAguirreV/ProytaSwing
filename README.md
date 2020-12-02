@@ -4,7 +4,7 @@ Con esta aplicación puedes gestionar todos tus proyectos e ideas de manera simp
 ## 🛠️ Pre-requisitos
 Para poder usar esta aplicación es necesario tener instalado **Java**.
 * En Windows podrás ejecutarlo de manera sencilla con solo hacer doble click en el _.jar_.
-* En Linux tendrás que emplear los comandos _java -jar ./tu_ruta/TaskMan.jar_ No olvides darle permisos.
+* En Linux tendrás que emplear los comandos _java -jar ./tu_ruta/Proyta.jar_ No olvides darle permisos.
 
 ## 🖇️ ¿Dónde lo puedo descargar?
 Desde la misma página de [SourceForge]().
@@ -16,8 +16,8 @@ También podrás hacer búsquedas por título.
 Todos los proyectos son almacenados como registros en una BD llamada "bd_proyectos".
 
 ## 🔩 Diferencias entre versiones.
-La versión Swing es más liviana, emplea poca memoria RAM pero es menos vistosa.
-La versión Fx emplea más recursos, pero es más llamativa.
+La **versión Swing** es más liviana, emplea poca memoria RAM pero es menos vistosa.
+La **versión Fx** emplea más recursos, pero es más llamativa.
 Ambas versiones trabajan de la misma manera, por lo que podrás emplear la misma BD con ambas aplicaciones.
 
 ## ✒️ Autores

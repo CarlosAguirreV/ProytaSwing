@@ -8,8 +8,9 @@ package modelo;
 public interface Constantes {
 
     // Valores generales.
-    public static final String VERSION = "25-11-2020";
+    public static final String VERSION = "02-12-2020";
     public static final String WEB_DONATIVO = "https://ko-fi.com/carlosaguirrev";
+    public static final String WEB_GITHUB = "https://github.com/CarlosAguirreV/ProytaSwing.git";
 
     // Para poner limites a las cadenas String, ya que SQLite no las pone.
     public static final int LIMITE_TITULO = 100;
