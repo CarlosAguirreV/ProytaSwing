@@ -150,6 +150,12 @@ public class VistaEdicion extends JDialog {
         btnVolver.setIcon(new ImageIcon(getClass().getResource("/recursos/volver.png")));
         btnGuardar.setIcon(new ImageIcon(getClass().getResource("/recursos/guardar.png")));
         btnCancelar.setIcon(new ImageIcon(getClass().getResource("/recursos/cancelar.png")));
+        
+        btnEditar.setFocusPainted(false);
+        btnEliminar.setFocusPainted(false);
+        btnVolver.setFocusPainted(false);
+        btnGuardar.setFocusPainted(false);
+        btnCancelar.setFocusPainted(false);
 
         // Color del campo ID.
         txtId.setBackground(colorAzulId);
