@@ -6,7 +6,7 @@ Para poder usar esta aplicación es necesario tener instalado **Java**.
 * En Windows podrás ejecutarlo de manera sencilla con solo hacer doble click en el _.jar_.
 * En Linux tendrás que emplear los comandos _java -jar ./tu_ruta/Proyta.jar_ No olvides darle permisos.
 
-## 🖇️ Descargar
+## 🖇️ Descarga
 [![Download Proyta](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/proyta/files/latest/download)
 
 ## 📖 ¿Cómo funciona?
