@@ -57,8 +57,7 @@ public interface Diccionario {
     String CANCELAR = "Cancelar";
     String BUSCAR = "Buscar";
     String NUEVO_PROYECTO = "Nuevo proyecto";
-    String VER = "Ver";
-    String VER_EDITAR = VER + " / Editar";
+    String VER_EDITAR = "Ver / Editar";
 
     String CERRAR = "Cerrar";
     String INVITAR_CAFE = "Invitar a un café";

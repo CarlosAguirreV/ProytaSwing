@@ -111,7 +111,7 @@ public class VistaTabla extends JFrame {
         btnNuevoProyecto = new JButton(NUEVO_PROYECTO);
         btnEditar = new JButton(VER_EDITAR);
         btnAcerca = new JButton();
-        lblVer = new JLabel(VER);
+        lblVer = new JLabel(new ImageIcon(getClass().getResource("/recursos/filtro.png")));
 
         // Rellenar el array de cadenas para el filtro (combo box)
         cadenasFiltro = new String[CADENAS_ESTADO.length + 1];
@@ -122,7 +122,7 @@ public class VistaTabla extends JFrame {
 
         // Asignarle esos valores al combo box
         cmbFiltro = new JComboBox(cadenasFiltro);
-        cmbFiltro.setSelectedIndex(0);
+        cmbFiltro.setSelectedIndex(1);
     }
 
     private void definirEstilos() {
