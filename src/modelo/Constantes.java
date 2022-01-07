@@ -8,7 +8,7 @@ package modelo;
 public interface Constantes {
 
     // Valores generales.
-    public static final String VERSION = "02-12-2020";
+    public static final String VERSION = "07.01.22";
     public static final String WEB_DONATIVO = "https://ko-fi.com/carlosaguirrev";
     public static final String WEB_GITHUB = "https://github.com/CarlosAguirreV/ProytaSwing.git";
 
